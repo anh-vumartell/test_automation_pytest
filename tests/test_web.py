@@ -14,6 +14,9 @@ the test simple, safe and independent
 - Enable parallel running
 - WebDriver setup is best handled using pytest fixture
 """
+# Global variables 
+URL = "http://automationpractice.com/index.php"
+
 @pytest.fixture
 def browser():
     # Initialize ChromeDriver
@@ -28,8 +31,7 @@ def browser():
     # For cleanup, quit the driver
     driver.quit()
 
-def test_basic_search(browser):
-    URL = "http://automationpractice.com/index.php"
+def test_basic_search_with_valid_query(browser):
     SEARCH_QUERY = "dress"
     #starting point: navigate to the above website
     # ARRANGE
@@ -42,7 +44,7 @@ def test_basic_search(browser):
 
     # ASSERT
     # Assert 1: verify that the search phrase is appeared in the search input
-    search_input = browser.find_element(By.CSS_SELECTOR, '[name="search_query')
+    search_input = browser.find_element(By.CSS_SELECTOR, '[name="search_query"]')
     assert search_input.get_attribute("value") == SEARCH_QUERY
 
     # Assert 2: verify results displayed with valid SEARCH_QUERY
@@ -56,3 +58,38 @@ def test_basic_search(browser):
     phrase_results = browser.find_elements(By.XPATH, xpath)
     # Simply verify that at least there is one div that contains the search_query
     assert len(phrase_results) >0
+
+def test_basic_search_with_empty_query(browser):
+    SEARCH_QUERY = ""
+    # ARRANGE
+    browser.get(URL)
+
+    # ACT
+    search_input = browser.find_element(By.CSS_SELECTOR, '[name="search_query"]')
+    #send the search query and submit the search with Keys.RETURN
+    search_input.send_keys(SEARCH_QUERY + Keys.RETURN)
+
+    #ASSERT
+    # Verify that a warning message appears
+    alert_message = browser.find_element(By.XPATH, "//*[@id='center_column']/p").text
+    assert alert_message == "Please enter a search keyword"
+
+    # Verify that no result in return
+    counter_message = browser.find_element(By.XPATH, "//*[@id='center_column']/h1/span").text
+    assert counter_message == "0 results have been found."
+
+def test_basic_search_with_number(browser):
+    SEARCH_QUERY = "0"
+
+    # ARRANGE
+    browser.get(URL)
+
+    # ACT
+    search_input = browser.find_element(By.CSS_SELECTOR, '[name="search_query"]')
+    #send the search query and submit the search with Keys.RETURN
+    search_input.send_keys(SEARCH_QUERY + Keys.RETURN)
+
+    #ASSERT
+    # Verify that a warning message appears
+    alert_message = browser.find_element(By.XPATH, "//*[@id='center_column']/p").text
+    assert alert_message == f'No results were found for your search "${SEARCH_QUERY}"'

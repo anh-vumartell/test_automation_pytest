@@ -1,0 +1,9 @@
+search_query,expected_message,actual_message
+"""""","""Please enter a search keyword""","""Please enter a search keyword"""
+0,"No results were found for your search ""0""","""Please enter a search keyword"""
+99999,"No results were found for your search ""99999""","No results were found for your search ""99999"""
+0%,"No results were found for your search ""0%""","No results were found for your search ""0%"""
+<dress>,"No results were found for your search ""<dress>""",7 results have been found
+index.html,"No results were found for your search ""index.html""","No results were found for your search ""index.html"""
+select * DRESS from TABLE,"No results were found for your search ""select * DRESS from TABLE""","No results were found for your search ""select * DRESS from TABLE"""
+<script>dress</script>,"No results were found for your search ""<script>dress</script>""",7 results have been found
