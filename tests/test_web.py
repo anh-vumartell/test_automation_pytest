@@ -59,7 +59,7 @@ def test_basic_search_with_valid_query(browser):
     # Simply verify that at least there is one div that contains the search_query
     assert len(search_results) > 0
 
-def test_basic_search_with_number(browser):
+def test_basic_search_with_a_short_number_string(browser):
     SEARCH_QUERY = "0"
 
     # ARRANGE
@@ -74,3 +74,35 @@ def test_basic_search_with_number(browser):
     # Verify that a warning message appears
     alert_message = browser.find_element(By.XPATH, "//div[@class='message notice']").text
     assert alert_message == f'Minimum Search query length is 3'
+
+def test_basic_search_with_three_number_string(browser):
+    SEARCH_QUERY = "112"
+
+    # ARRANGE
+    browser.get(URL)
+
+    # ACT
+    search_input = browser.find_element(By.CSS_SELECTOR, '[name="q"]')
+    #send the search query and submit the search with Keys.RETURN
+    search_input.send_keys(SEARCH_QUERY + Keys.RETURN)
+
+    #ASSERT
+    # Verify that a warning message appears
+    alert_message = browser.find_element(By.XPATH, "//div[@class='message notice']").text
+    assert alert_message == f'Your search returned no results.'
+
+def test_basic_search_with_an_invalid_input(browser):
+    SEARCH_QUERY = "mikki@test.com"
+
+    # ARRANGE
+    browser.get(URL)
+
+    # ACT
+    search_input = browser.find_element(By.CSS_SELECTOR, '[name="q"]')
+    #send the search query and submit the search with Keys.RETURN
+    search_input.send_keys(SEARCH_QUERY + Keys.RETURN)
+
+    #ASSERT
+    # Verify that a warning message appears
+    alert_message = browser.find_element(By.XPATH, "//div[@class='message notice']").text
+    assert alert_message == f'Your search returned no results'
