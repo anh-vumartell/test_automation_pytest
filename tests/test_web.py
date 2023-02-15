@@ -15,7 +15,7 @@ the test simple, safe and independent
 - WebDriver setup is best handled using pytest fixture
 """
 # Global variables 
-URL = "http://automationpractice.com/index.php"
+URL = "https://magento.softwaretestingboard.com"
 
 @pytest.fixture
 def browser():
@@ -32,51 +32,32 @@ def browser():
     driver.quit()
 
 def test_basic_search_with_valid_query(browser):
-    SEARCH_QUERY = "dress"
+    SEARCH_QUERY = "yoga"
     #starting point: navigate to the above website
     # ARRANGE
     browser.get(URL)
 
     # ACT
-    search_input = browser.find_element(By.CSS_SELECTOR, '[name="search_query')
+    search_input = browser.find_element(By.CSS_SELECTOR, '[name="q')
     #send the search query and submit the search with Keys.RETURN
     search_input.send_keys(SEARCH_QUERY + Keys.RETURN)
 
     # ASSERT
     # Assert 1: verify that the search phrase is appeared in the search input
-    search_input = browser.find_element(By.CSS_SELECTOR, '[name="search_query"]')
+    search_input = browser.find_element(By.CSS_SELECTOR, '[name="q"]')
     assert search_input.get_attribute("value") == SEARCH_QUERY
 
     # Assert 2: verify results displayed with valid SEARCH_QUERY
-    results_list = browser.find_elements(By.CSS_SELECTOR, "#center_column > ul")
+    results_list = browser.find_elements(By.CLASS_NAME, "block")
     assert len(results_list) > 0
 
     # Assert 3: verify that each result contains the search query phrase
     # Find any divs which is decendant of div with id=colummns and verify that they contains the search query
-    xpath = f"//div[@id='columns']//*[contains(text(), '{SEARCH_QUERY}')]"
+    xpath = f"//dl[@class='block']//*[contains(text(), '{SEARCH_QUERY}')]"
     # Assign found elements to a variable
-    phrase_results = browser.find_elements(By.XPATH, xpath)
+    search_results = browser.find_elements(By.XPATH, xpath)
     # Simply verify that at least there is one div that contains the search_query
-    assert len(phrase_results) >0
-
-def test_basic_search_with_empty_query(browser):
-    SEARCH_QUERY = ""
-    # ARRANGE
-    browser.get(URL)
-
-    # ACT
-    search_input = browser.find_element(By.CSS_SELECTOR, '[name="search_query"]')
-    #send the search query and submit the search with Keys.RETURN
-    search_input.send_keys(SEARCH_QUERY + Keys.RETURN)
-
-    #ASSERT
-    # Verify that a warning message appears
-    alert_message = browser.find_element(By.XPATH, "//*[@id='center_column']/p").text
-    assert alert_message == "Please enter a search keyword"
-
-    # Verify that no result in return
-    counter_message = browser.find_element(By.XPATH, "//*[@id='center_column']/h1/span").text
-    assert counter_message == "0 results have been found."
+    assert len(search_results) > 0
 
 def test_basic_search_with_number(browser):
     SEARCH_QUERY = "0"
@@ -85,11 +66,11 @@ def test_basic_search_with_number(browser):
     browser.get(URL)
 
     # ACT
-    search_input = browser.find_element(By.CSS_SELECTOR, '[name="search_query"]')
+    search_input = browser.find_element(By.CSS_SELECTOR, '[name="q"]')
     #send the search query and submit the search with Keys.RETURN
     search_input.send_keys(SEARCH_QUERY + Keys.RETURN)
 
     #ASSERT
     # Verify that a warning message appears
-    alert_message = browser.find_element(By.XPATH, "//*[@id='center_column']/p").text
-    assert alert_message == f'No results were found for your search "${SEARCH_QUERY}"'
+    alert_message = browser.find_element(By.XPATH, "//div[@class='message notice']").text
+    assert alert_message == f'Minimum Search query length is 3'
